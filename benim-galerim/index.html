@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avrupa Seyahat Günlüğüm</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #e0e0e0;
+            text-align: center;
+            scroll-behavior: smooth;
+        }
+
+        header {
+            padding: 50px 20px;
+            background: linear-gradient(135deg, #1f4068, #16c79a);
+        }
+
+        h1 { margin: 0; font-size: 2.8rem; letter-spacing: 1px; }
+        p { color: #b3b3b3; margin-top: 10px; font-size: 1.1rem; }
+
+        .kategori-container {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: rgba(18, 18, 18, 0.95);
+            margin: 0;
+            padding: 20px 15px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            border-bottom: 1px solid #222;
+        }
+
+        .btn-konum {
+            display: inline-block;
+            background-color: #1f4068;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            font-size: 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .btn-konum:hover {
+            background-color: #16c79a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(22, 199, 154, 0.4);
+        }
+
+        .sehir-bolumu {
+            padding: 30px 20px 10px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        .sehir-bolumu h2 {
+            color: #16c79a;
+            font-size: 2rem;
+            border-bottom: 2px solid #1f4068;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+        }
+
+        .galeri {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            padding-bottom: 50px;
+        }
+
+        .galeri-kart {
+            background-color: #1b1b2f;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            display: block;
+        }
+
+        .galeri-kart:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.8);
+        }
+
+        .galeri-kart img {
+            width: 100%;
+            height: 230px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s;
+        }
+
+        .galeri-kart:hover img { transform: scale(1.03); }
+
+        .konum-etiket {
+            padding: 15px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #16c79a;
+            background-color: #161625;
+        }
+
+        .lightbox-pencereleri .lightbox-hedef {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            justify-content: center; align-items: center;
+        }
+
+        .lightbox-pencereleri .lightbox-hedef:target {
+            display: flex;
+        }
+
+        .lightbox-icerik {
+            display: flex;
+            flex-direction: row-reverse;
+            background-color: #1b1b2f;
+            max-width: 95vw;
+            width: auto;
+            max-height: 90vh;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .lightbox-resim-alani {
+            flex: 1;
+            background-color: #000;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .lightbox-resim-alani img { 
+            max-width: 100%; 
+            max-height: 90vh; 
+            object-fit: contain;
+            display: block;
+        }
+
+        .lightbox-not-alani {
+            width: 320px;
+            min-width: 320px;
+            padding: 40px 30px;
+            display: flex; flex-direction: column; justify-content: center;
+            text-align: left; border-right: 1px solid #2c2c44;
+            background-color: #1b1b2f;
+            box-sizing: border-box;
+        }
+
+        .lightbox-not-alani h3 { margin-top: 0; color: #16c79a; font-size: 22px; margin-bottom: 15px; }
+        .lightbox-not-alani p { color: #e0e0e0; font-size: 16px; line-height: 1.6; margin: 0; }
+        
+        .kapat-btn { 
+            position: absolute; top: 20px; right: 30px; 
+            color: #fff; font-size: 40px; font-weight: bold; 
+            text-decoration: none; user-select: none; z-index: 10000;
+        }
+
+        @media (max-width: 768px) {
+            .lightbox-icerik { flex-direction: column; max-height: 95vh; width: 90%; }
+            .lightbox-not-alani { width: 100%; min-width: 100%; padding: 20px; border-right: none; border-top: 1px solid #2c2c44; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Avrupa Gezi Günlüğüm</h1>
+        <p>Erasmus Anılarım 2026</p>
+    </header>
+
+    <div class="kategori-container">
+        <a href="#berlin-bolumu" class="btn-konum">Berlin</a>
+        <a href="#dresden-bolumu" class="btn-konum">Dresden</a>
+        <a href="#schwerin-bolumu" class="btn-konum">Schwerin</a>
+        <a href="#leipzig-bolumu" class="btn-konum">Leipzig</a>
+        <a href="#krakow-bolumu" class="btn-konum">Krakow</a>
+        <a href="#wroclaw-bolumu" class="btn-konum">Wroclaw</a>
+        <a href="#copenhagen-bolumu" class="btn-konum">Copenhagen</a>
+        <a href="#prag-bolumu" class="btn-konum">Prag</a>
+    </div>
+    
+    <div class="sehir-bolumu" id="berlin-bolumu">
+        <h2>📍 Berlin, Almanya</h2>
+        <div class="galeri">
+            <a href="#b1" class="galeri-kart"><img src="fotograflar/Berlin/foto1.jpeg" alt="Berlin"><div class="konum-etiket">Berlin (1/10)</div></a>
+            <a href="#b2" class="galeri-kart"><img src="fotograflar/Berlin/foto2.jpeg" alt="Berlin"><div class="konum-etiket">Berlin (2/10)</div></a>
+            <a href="#b3" class="galeri-kart"><img src="fotograflar/Berlin/foto3.jpeg" alt="Berlin"><div class="konum-etiket">Berlin (3/10)</div></a>
+            <a href="#b4" class="galeri-kart"><img src="fotograflar/Berlin/foto4.jpg" alt="Berlin"><div class="konum-etiket">Berlin (4/10)</div></a>
+            <a href="#b5" class="galeri-kart"><img src="fotograflar/Berlin/foto5.jpeg" alt="Berlin"><div class="konum-etiket">Berlin (5/10)</div></a>
+            <a href="#b6" class="galeri-kart"><img src="fotograflar/Berlin/foto6.jpeg" alt="Berlin"><div class="konum-etiket">Berlin (6/10)</div></a>
+            <a href="#b7" class="galeri-kart"><img src="fotograflar/Berlin/foto7.jpeg" alt="Berlin"><div class="konum-etiket">Berlin (7/10)</div></a>
+            <a href="#b8" class="galeri-kart"><img src="fotograflar/Berlin/foto8.jpeg" alt="Berlin"><div class="konum-etiket">Berlin (8/10)</div></a>
+            <a href="#b9" class="galeri-kart"><img src="fotograflar/Berlin/foto9.jpeg" alt="Berlin"><div class="konum-etiket">Berlin (9/10)</div></a>
+            <a href="#b10" class="galeri-kart"><img src="fotograflar/Berlin/foto10.jpeg" alt="Berlin"><div class="konum-etiket">Berlin (10/10)</div></a>
+        </div>
+    </div>
+
+    <div class="sehir-bolumu" id="dresden-bolumu">
+        <h2>📍 Dresden, Almanya</h2>
+        <div class="galeri">
+            <a href="#d1" class="galeri-kart"><img src="fotograflar/Dresden/foto1.jpeg" alt="Dresden"><div class="konum-etiket">Dresden (1/10)</div></a>
+            <a href="#d2" class="galeri-kart"><img src="fotograflar/Dresden/foto2.jpeg" alt="Dresden"><div class="konum-etiket">Dresden (2/10)</div></a>
+            <a href="#d3" class="galeri-kart"><img src="fotograflar/Dresden/foto3.jpeg" alt="Dresden"><div class="konum-etiket">Dresden (3/10)</div></a>
+            <a href="#d4" class="galeri-kart"><img src="fotograflar/Dresden/foto4.jpeg" alt="Dresden"><div class="konum-etiket">Dresden (4/10)</div></a>
+            <a href="#d5" class="galeri-kart"><img src="fotograflar/Dresden/foto5.jpeg" alt="Dresden"><div class="konum-etiket">Dresden (5/10)</div></a>
+            <a href="#d6" class="galeri-kart"><img src="fotograflar/Dresden/foto6.jpeg" alt="Dresden"><div class="konum-etiket">Dresden (6/10)</div></a>
+            <a href="#d7" class="galeri-kart"><img src="fotograflar/Dresden/foto7.jpeg" alt="Dresden"><div class="konum-etiket">Dresden (7/10)</div></a>
+            <a href="#d8" class="galeri-kart"><img src="fotograflar/Dresden/foto8.jpeg" alt="Dresden"><div class="konum-etiket">Dresden (8/10)</div></a>
+            <a href="#d9" class="galeri-kart"><img src="fotograflar/Dresden/foto9.jpeg" alt="Dresden"><div class="konum-etiket">Dresden (9/10)</div></a>
+            <a href="#d10" class="galeri-kart"><img src="fotograflar/Dresden/foto10.jpeg" alt="Dresden"><div class="konum-etiket">Dresden (10/10)</div></a>
+        </div>
+    </div>
+
+    <div class="sehir-bolumu" id="schwerin-bolumu">
+        <h2>📍 Schwerin, Almanya</h2>
+        <div class="galeri">
+            <a href="#s1" class="galeri-kart"><img src="fotograflar/Schwerin/foto1.jpeg" alt="Schwerin"><div class="konum-etiket">Schwerin (1/10)</div></a>
+            <a href="#s2" class="galeri-kart"><img src="fotograflar/Schwerin/foto2.jpeg" alt="Schwerin"><div class="konum-etiket">Schwerin (2/10)</div></a>
+            <a href="#s3" class="galeri-kart"><img src="fotograflar/Schwerin/foto3.jpeg" alt="Schwerin"><div class="konum-etiket">Schwerin (3/10)</div></a>
+            <a href="#s4" class="galeri-kart"><img src="fotograflar/Schwerin/foto4.jpeg" alt="Schwerin"><div class="konum-etiket">Schwerin (4/10)</div></a>
+            <a href="#s5" class="galeri-kart"><img src="fotograflar/Schwerin/foto5.jpeg" alt="Schwerin"><div class="konum-etiket">Schwerin (5/10)</div></a>
+            <a href="#s6" class="galeri-kart"><img src="fotograflar/Schwerin/foto6.jpeg" alt="Schwerin"><div class="konum-etiket">Schwerin (6/10)</div></a>
+            <a href="#s7" class="galeri-kart"><img src="fotograflar/Schwerin/foto7.jpeg" alt="Schwerin"><div class="konum-etiket">Schwerin (7/10)</div></a>
+            <a href="#s8" class="galeri-kart"><img src="fotograflar/Schwerin/foto8.jpeg" alt="Schwerin"><div class="konum-etiket">Schwerin (8/10)</div></a>
+            <a href="#s9" class="galeri-kart"><img src="fotograflar/Schwerin/foto9.jpeg" alt="Schwerin"><div class="konum-etiket">Schwerin (9/10)</div></a>
+            <a href="#s10" class="galeri-kart"><img src="fotograflar/Schwerin/foto10.jpeg" alt="Schwerin"><div class="konum-etiket">Schwerin (10/10)</div></a>
+        </div>
+    </div>
+
+    <div class="sehir-bolumu" id="leipzig-bolumu">
+        <h2>📍 Leipzig, Almanya</h2>
+        <div class="galeri">
+            <a href="#l1" class="galeri-kart"><img src="fotograflar/Leipzig/foto1.jpg" alt="Leipzig"><div class="konum-etiket">Leipzig (1/10)</div></a>
+            <a href="#l2" class="galeri-kart"><img src="fotograflar/Leipzig/foto2.jpeg" alt="Leipzig"><div class="konum-etiket">Leipzig (2/10)</div></a>
+            <a href="#l3" class="galeri-kart"><img src="fotograflar/Leipzig/foto3.jpeg" alt="Leipzig"><div class="konum-etiket">Leipzig (3/10)</div></a>
+            <a href="#l4" class="galeri-kart"><img src="fotograflar/Leipzig/foto4.jpeg" alt="Leipzig"><div class="konum-etiket">Leipzig (4/10)</div></a>
+            <a href="#l5" class="galeri-kart"><img src="fotograflar/Leipzig/foto5.jpeg" alt="Leipzig"><div class="konum-etiket">Leipzig (5/10)</div></a>
+            <a href="#l6" class="galeri-kart"><img src="fotograflar/Leipzig/foto6.jpeg" alt="Leipzig"><div class="konum-etiket">Leipzig (6/10)</div></a>
+            <a href="#l7" class="galeri-kart"><img src="fotograflar/Leipzig/foto7.jpeg" alt="Leipzig"><div class="konum-etiket">Leipzig (7/10)</div></a>
+            <a href="#l8" class="galeri-kart"><img src="fotograflar/Leipzig/foto8.jpeg" alt="Leipzig"><div class="konum-etiket">Leipzig (8/10)</div></a>
+            <a href="#l9" class="galeri-kart"><img src="fotograflar/Leipzig/foto9.jpeg" alt="Leipzig"><div class="konum-etiket">Leipzig (9/10)</div></a>
+            <a href="#l10" class="galeri-kart"><img src="fotograflar/Leipzig/foto10.jpeg" alt="Leipzig"><div class="konum-etiket">Leipzig (10/10)</div></a>
+        </div>
+    </div>
+
+    <div class="sehir-bolumu" id="krakow-bolumu">
+        <h2>📍 Krakow, Polonya</h2>
+        <div class="galeri">
+            <a href="#kr1" class="galeri-kart"><img src="fotograflar/Krakow/foto1.jpeg" alt="Krakow"><div class="konum-etiket">Krakow (1/10)</div></a>
+            <a href="#kr2" class="galeri-kart"><img src="fotograflar/Krakow/foto2.jpeg" alt="Krakow"><div class="konum-etiket">Krakow (2/10)</div></a>
+            <a href="#kr3" class="galeri-kart"><img src="fotograflar/Krakow/foto3.jpeg" alt="Krakow"><div class="konum-etiket">Krakow (3/10)</div></a>
+            <a href="#kr4" class="galeri-kart"><img src="fotograflar/Krakow/foto4.jpeg" alt="Krakow"><div class="konum-etiket">Krakow (4/10)</div></a>
+            <a href="#kr5" class="galeri-kart"><img src="fotograflar/Krakow/foto5.jpeg" alt="Krakow"><div class="konum-etiket">Krakow (5/10)</div></a>
+            <a href="#kr6" class="galeri-kart"><img src="fotograflar/Krakow/foto6.jpeg" alt="Krakow"><div class="konum-etiket">Krakow (6/10)</div></a>
+            <a href="#kr7" class="galeri-kart"><img src="fotograflar/Krakow/foto7.jpeg" alt="Krakow"><div class="konum-etiket">Krakow (7/10)</div></a>
+            <a href="#kr8" class="galeri-kart"><img src="fotograflar/Krakow/foto8.jpeg" alt="Krakow"><div class="konum-etiket">Krakow (8/10)</div></a>
+            <a href="#kr9" class="galeri-kart"><img src="fotograflar/Krakow/foto9.jpeg" alt="Krakow"><div class="konum-etiket">Krakow (9/10)</div></a>
+            <a href="#kr10" class="galeri-kart"><img src="fotograflar/Krakow/foto10.jpeg" alt="Krakow"><div class="konum-etiket">Krakow (10/10)</div></a>
+        </div>
+    </div>
+
+    <div class="sehir-bolumu" id="wroclaw-bolumu">
+        <h2>📍 Wroclaw, Polonya</h2>
+        <div class="galeri">
+            <a href="#w1" class="galeri-kart"><img src="fotograflar/Wroclaw/foto1.jpeg" alt="Wroclaw"><div class="konum-etiket">Wroclaw (1/10)</div></a>
+            <a href="#w2" class="galeri-kart"><img src="fotograflar/Wroclaw/foto2.jpeg" alt="Wroclaw"><div class="konum-etiket">Wroclaw (2/10)</div></a>
+            <a href="#w3" class="galeri-kart"><img src="fotograflar/Wroclaw/foto3.jpeg" alt="Wroclaw"><div class="konum-etiket">Wroclaw (3/10)</div></a>
+            <a href="#w4" class="galeri-kart"><img src="fotograflar/Wroclaw/foto4.jpeg" alt="Wroclaw"><div class="konum-etiket">Wroclaw (4/10)</div></a>
+            <a href="#w5" class="galeri-kart"><img src="fotograflar/Wroclaw/foto5.jpeg" alt="Wroclaw"><div class="konum-etiket">Wroclaw (5/10)</div></a>
+            <a href="#w6" class="galeri-kart"><img src="fotograflar/Wroclaw/foto6.jpeg" alt="Wroclaw"><div class="konum-etiket">Wroclaw (6/10)</div></a>
+            <a href="#w7" class="galeri-kart"><img src="fotograflar/Wroclaw/foto7.jpeg" alt="Wroclaw"><div class="konum-etiket">Wroclaw (7/10)</div></a>
+            <a href="#w8" class="galeri-kart"><img src="fotograflar/Wroclaw/foto8.jpeg" alt="Wroclaw"><div class="konum-etiket">Wroclaw (8/10)</div></a>
+            <a href="#w9" class="galeri-kart"><img src="fotograflar/Wroclaw/foto9.jpeg" alt="Wroclaw"><div class="konum-etiket">Wroclaw (9/10)</div></a>
+            <a href="#w10" class="galeri-kart"><img src="fotograflar/Wroclaw/foto10.jpeg" alt="Wroclaw"><div class="konum-etiket">Wroclaw (10/10)</div></a>
+        </div>
+    </div>
+
+    <div class="sehir-bolumu" id="copenhagen-bolumu">
+        <h2>📍 Copenhagen, Danimarka</h2>
+        <div class="galeri">
+            <a href="#c1" class="galeri-kart"><img src="fotograflar/Cophenagen/foto1.jpeg" alt="Copenhagen"><div class="konum-etiket">Kopenhag (1/10)</div></a>
+            <a href="#c2" class="galeri-kart"><img src="fotograflar/Cophenagen/foto2.jpeg" alt="Copenhagen"><div class="konum-etiket">Kopenhag (2/10)</div></a>
+            <a href="#c3" class="galeri-kart"><img src="fotograflar/Cophenagen/foto3.jpeg" alt="Copenhagen"><div class="konum-etiket">Kopenhag (3/10)</div></a>
+            <a href="#c4" class="galeri-kart"><img src="fotograflar/Cophenagen/foto4.jpeg" alt="Copenhagen"><div class="konum-etiket">Kopenhag (4/10)</div></a>
+            <a href="#c5" class="galeri-kart"><img src="fotograflar/Cophenagen/foto5.jpeg" alt="Copenhagen"><div class="konum-etiket">Kopenhag (5/10)</div></a>
+            <a href="#c6" class="galeri-kart"><img src="fotograflar/Cophenagen/foto6.jpeg" alt="Copenhagen"><div class="konum-etiket">Kopenhag (6/10)</div></a>
+            <a href="#c7" class="galeri-kart"><img src="fotograflar/Cophenagen/foto7.jpeg" alt="Copenhagen"><div class="konum-etiket">Kopenhag (7/10)</div></a>
+            <a href="#c8" class="galeri-kart"><img src="fotograflar/Cophenagen/foto8.jpeg" alt="Copenhagen"><div class="konum-etiket">Kopenhag (8/10)</div></a>
+            <a href="#c9" class="galeri-kart"><img src="fotograflar/Cophenagen/foto9.jpeg" alt="Copenhagen"><div class="konum-etiket">Kopenhag (9/10)</div></a>
+            <a href="#c10" class="galeri-kart"><img src="fotograflar/Cophenagen/foto10.jpeg" alt="Copenhagen"><div class="konum-etiket">Kopenhag (10/10)</div></a>
+        </div>
+    </div>
+
+    <div class="sehir-bolumu" id="prag-bolumu">
+        <h2>📍 Prag, Çekya</h2>
+        <div class="galeri">
+            <a href="#p1" class="galeri-kart"><img src="fotograflar/Prag/foto1.jpeg" alt="Prag"><div class="konum-etiket">Prag (1/10)</div></a>
+            <a href="#p2" class="galeri-kart"><img src="fotograflar/Prag/foto2.jpeg" alt="Prag"><div class="konum-etiket">Prag (2/10)</div></a>
+            <a href="#p3" class="galeri-kart"><img src="fotograflar/Prag/foto3.jpeg" alt="Prag"><div class="konum-etiket">Prag (3/10)</div></a>
+            <a href="#p4" class="galeri-kart"><img src="fotograflar/Prag/foto4.jpeg" alt="Prag"><div class="konum-etiket">Prag (4/10)</div></a>
+            <a href="#p5" class="galeri-kart"><img src="fotograflar/Prag/foto5.jpeg" alt="Prag"><div class="konum-etiket">Prag (5/10)</div></a>
+            <a href="#p6" class="galeri-kart"><img src="fotograflar/Prag/foto6.jpeg" alt="Prag"><div class="konum-etiket">Prag (6/10)</div></a>
+            <a href="#p7" class="galeri-kart"><img src="fotograflar/Prag/foto7.jpeg" alt="Prag"><div class="konum-etiket">Prag (7/10)</div></a>
+            <a href="#p8" class="galeri-kart"><img src="fotograflar/Prag/foto8.jpeg" alt="Prag"><div class="konum-etiket">Prag (8/10)</div></a>
+            <a href="#p9" class="galeri-kart"><img src="fotograflar/Prag/foto9.jpeg" alt="Prag"><div class="konum-etiket">Prag (9/10)</div></a>
+            <a href="#p10" class="galeri-kart"><img src="fotograflar/Prag/foto10.jpeg" alt="Prag"><div class="konum-etiket">Prag (10/10)</div></a>
+        </div>
+    </div>
+
+
+    <div class="lightbox-pencereleri">
+        
+        <div id="b1" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Berlin/foto1.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Garten der Welt, Almanya</h3><p>Garten der Welt'te geçen güzel arkadaşlarımla geçirdiğimiz çiçek gibi bir gündü.</p></div></div></div>
+        <div id="b2" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Berlin/foto2.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Garten der Welt, Almanya</h3><p>Labirentin içindeyken doğru anı bekledim doğrusu.</p></div></div></div>
+        <div id="b3" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Berlin/foto3.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Garten der Welt, Almanya</h3><p>Juyeon'un bambu ormanındaki mistik fotoğrafı. Çok fotojenik kız.</p></div></div></div>
+        <div id="b4" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Berlin/foto4.jpg"></div><div class="lightbox-not-alani"><h3>📍 Berlin, Almanya</h3><p>Berlin'e geldiğimiz ilk günler. Sokak sanatını tanımak için okulun düzenlediği tura katılmıştık.</p></div></div></div>
+        <div id="b5" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Berlin/foto5.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Berlin</h3><p>Berlin Notu 5</p></div></div></div>
+        <div id="b6" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Berlin/foto6.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Berlin</h3><p>Berlin Notu 6</p></div></div></div>
+        <div id="b7" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Berlin/foto7.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Berlin</h3><p>Berlin Notu 7</p></div></div></div>
+        <div id="b8" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Berlin/foto8.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Berlin</h3><p>Berlin Notu 8</p></div></div></div>
+        <div id="b9" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Berlin/foto9.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Berlin</h3><p>Berlin Notu 9</p></div></div></div>
+        <div id="b10" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Berlin/foto10.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Berlin</h3><p>Berlin Notu 10</p></div></div></div>
+
+        <div id="d1" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Dresden/foto1.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Dresden, Almanya</h3><p>Dresden'in tarihi sokaklarında harika bir yürüyüş.</p></div></div></div>
+        <div id="d2" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Dresden/foto2.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Dresden, Almanya</h3><p>Elbe nehri kenarında gün batımı...</p></div></div></div>
+        <div id="d3" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Dresden/foto3.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Dresden</h3><p>Not...</p></div></div></div>
+        <div id="d4" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Dresden/foto4.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Dresden</h3><p>Not...</p></div></div></div>
+        <div id="d5" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Dresden/foto5.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Dresden</h3><p>Not...</p></div></div></div>
+        <div id="d6" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Dresden/foto6.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Dresden</h3><p>Not...</p></div></div></div>
+        <div id="d7" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Dresden/foto7.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Dresden</h3><p>Not...</p></div></div></div>
+        <div id="d8" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Dresden/foto8.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Dresden</h3><p>Not...</p></div></div></div>
+        <div id="d9" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Dresden/foto9.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Dresden</h3><p>Not...</p></div></div></div>
+        <div id="d10" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Dresden/foto10.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Dresden</h3><p>Not...</p></div></div></div>
+
+        <div id="s1" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Schwerin/foto1.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Schwerin, Almanya</h3><p>Masalsı Schwerin kalesi.</p></div></div></div>
+        <div id="s2" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Schwerin/foto2.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Schwerin</h3><p>Not...</p></div></div></div>
+        <div id="s3" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Schwerin/foto3.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Schwerin</h3><p>Not...</p></div></div></div>
+        <div id="s4" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Schwerin/foto4.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Schwerin</h3><p>Not...</p></div></div></div>
+        <div id="s5" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Schwerin/foto5.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Schwerin</h3><p>Not...</p></div></div></div>
+        <div id="s6" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Schwerin/foto6.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Schwerin</h3><p>Not...</p></div></div></div>
+        <div id="s7" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Schwerin/foto7.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Schwerin</h3><p>Not...</p></div></div></div>
+        <div id="s8" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Schwerin/foto8.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Schwerin</h3><p>Not...</p></div></div></div>
+        <div id="s9" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Schwerin/foto9.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Schwerin</h3><p>Not...</p></div></div></div>
+        <div id="s10" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Schwerin/foto10.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Schwerin</h3><p>Not...</p></div></div></div>
+
+        <div id="l1" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Leipzig/foto1.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Leipzig, Almanya</h3><p>Leipzig'de gezerken karşılaştığımız klas görünümlü abi. Işığın azizliğine uğradık ancak güzel bir anı olarak kaldı.</p></div></div></div>
+        <div id="l2" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Leipzig/foto2.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Leipzig</h3><p>Not...</p></div></div></div>
+        <div id="l3" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Leipzig/foto3.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Leipzig</h3><p>Not...</p></div></div></div>
+        <div id="l4" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Leipzig/foto4.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Leipzig</h3><p>Not...</p></div></div></div>
+        <div id="l5" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Leipzig/foto5.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Leipzig</h3><p>Not...</p></div></div></div>
+        <div id="l6" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Leipzig/foto6.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Leipzig</h3><p>Not...</p></div></div></div>
+        <div id="l7" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Leipzig/foto7.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Leipzig</h3><p>Not...</p></div></div></div>
+        <div id="l8" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Leipzig/foto8.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Leipzig</h3><p>Not...</p></div></div></div>
+        <div id="l9" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Leipzig/foto9.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Leipzig</h3><p>Not...</p></div></div></div>
+        <div id="l10" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Leipzig/foto10.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Leipzig</h3><p>Not...</p></div></div></div>
+
+        <div id="kr1" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Krakow/foto1.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Krakow, Polonya</h3><p>Krakow meydanı.</p></div></div></div>
+        <div id="kr2" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Krakow/foto2.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Krakow</h3><p>Not...</p></div></div></div>
+        <div id="kr3" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Krakow/foto3.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Krakow</h3><p>Not...</p></div></div></div>
+        <div id="kr4" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Krakow/foto4.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Krakow</h3><p>Not...</p></div></div></div>
+        <div id="kr5" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Krakow/foto5.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Krakow</h3><p>Not...</p></div></div></div>
+        <div id="kr6" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Krakow/foto6.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Krakow</h3><p>Not...</p></div></div></div>
+        <div id="kr7" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Krakow/foto7.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Krakow</h3><p>Not...</p></div></div></div>
+        <div id="kr8" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Krakow/foto8.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Krakow</h3><p>Not...</p></div></div></div>
+        <div id="kr9" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Krakow/foto9.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Krakow</h3><p>Not...</p></div></div></div>
+        <div id="kr10" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Krakow/foto10.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Krakow</h3><p>Not...</p></div></div></div>
+
+        <div id="w1" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Wroclaw/foto1.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Wroclaw, Polonya</h3><p>Wroclaw cüceleri.</p></div></div></div>
+        <div id="w2" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Wroclaw/foto2.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Wroclaw</h3><p>Not...</p></div></div></div>
+        <div id="w3" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Wroclaw/foto3.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Wroclaw</h3><p>Not...</p></div></div></div>
+        <div id="w4" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Wroclaw/foto4.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Wroclaw</h3><p>Not...</p></div></div></div>
+        <div id="w5" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Wroclaw/foto5.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Wroclaw</h3><p>Not...</p></div></div></div>
+        <div id="w6" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Wroclaw/foto6.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Wroclaw</h3><p>Not...</p></div></div></div>
+        <div id="w7" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Wroclaw/foto7.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Wroclaw</h3><p>Not...</p></div></div></div>
+        <div id="w8" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Wroclaw/foto8.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Wroclaw</h3><p>Not...</p></div></div></div>
+        <div id="w9" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Wroclaw/foto9.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Wroclaw</h3><p>Not...</p></div></div></div>
+        <div id="w10" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Wroclaw/foto10.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Wroclaw</h3><p>Not...</p></div></div></div>
+
+        <div id="c1" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Cophenagen/foto1.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Kopenhag, Danimarka</h3><p>Nyhavn renkli evler.</p></div></div></div>
+        <div id="c2" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Cophenagen/foto2.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Kopenhag</h3><p>Not...</p></div></div></div>
+        <div id="c3" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Cophenagen/foto3.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Kopenhag</h3><p>Not...</p></div></div></div>
+        <div id="c4" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Cophenagen/foto4.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Kopenhag</h3><p>Not...</p></div></div></div>
+        <div id="c5" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Cophenagen/foto5.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Kopenhag</h3><p>Not...</p></div></div></div>
+        <div id="c6" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Cophenagen/foto6.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Kopenhag</h3><p>Not...</p></div></div></div>
+        <div id="c7" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Cophenagen/foto7.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Kopenhag</h3><p>Not...</p></div></div></div>
+        <div id="c8" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Cophenagen/foto8.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Kopenhag</h3><p>Not...</p></div></div></div>
+        <div id="c9" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Cophenagen/foto9.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Kopenhag</h3><p>Not...</p></div></div></div>
+        <div id="c10" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Cophenagen/foto10.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Kopenhag</h3><p>Not...</p></div></div></div>
+
+        <div id="p1" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Prag/foto1.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Prag, Çekya</h3><p>Powder Tower. Üstüne çıkarkenki basamaklar korkutucuydu, insan bir an hiç ulaşamayacak sanıyor. Ancak yukarıdan manzara efsane.</p></div></div></div>
+        <div id="p2" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Prag/foto2.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Prag</h3><p>Wallenstein Bahçesi'nde güzel bir tavuskuşu. Çılgın sesler çıkarıyordu.</p></div></div></div>
+        <div id="p3" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Prag/foto3.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Prag</h3><p>St. Vitus Katedrali. Cumartesi günü ücretsiz girmenin keyfi bir başkaydı. </p></div></div></div>
+        <div id="p4" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Prag/foto4.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Prag</h3><p>Trdelník tatlısı. Üstü şekerle kaplı bayık bir tatlı.</p></div></div></div>
+        <div id="p5" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Prag/foto5.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Prag</h3><p>St. Vitus Katedrali'nin camından gelen sabah güneşi cümbüşü. Bu fotoğrafın renkleriyle hiç oynamadım. İnsanın inanası gelmiyor.</p></div></div></div>
+        <div id="p6" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Prag/foto6.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Prag</h3><p>Not...</p></div></div></div>
+        <div id="p7" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Prag/foto7.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Prag</h3><p>Not...</p></div></div></div>
+        <div id="p8" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Prag/foto8.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Prag</h3><p>Not...</p></div></div></div>
+        <div id="p9" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Prag/foto9.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Prag</h3><p>Not...</p></div></div></div>
+        <div id="p10" class="lightbox-hedef"><div class="lightbox-icerik"><a href="#!" class="kapat-btn">&times;</a><div class="lightbox-resim-alani"><img src="fotograflar/Prag/foto10.jpeg"></div><div class="lightbox-not-alani"><h3>📍 Prag</h3><p>Not...</p></div></div></div>
+
+    </div>
+
+</body>
+</html>
